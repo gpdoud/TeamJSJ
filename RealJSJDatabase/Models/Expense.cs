@@ -22,7 +22,7 @@ namespace RealJSJDatabase.Models
         public int EmployeeId { get; set; }             //Fk
         public virtual Employee? Employee { get; set; }
 
-
+        public virtual ICollection<ExpenseLine>? ExpenseLines { get; set; }
 
 
     }
