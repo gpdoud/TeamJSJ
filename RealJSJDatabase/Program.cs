@@ -1,10 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using RealJSJDatabase.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 
-//DBContext and connection string
+builder.Services.AddDbContext<AppDbContext>(x =>
+{
+    x.UseSqlServer(builder.Configuration.GetConnectionString("Production"));
+});
 
 builder.Services.AddCors();
 
