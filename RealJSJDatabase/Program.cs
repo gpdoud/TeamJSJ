@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
+
     x.UseSqlServer(builder.Configuration.GetConnectionString("Production"));
 });
 
