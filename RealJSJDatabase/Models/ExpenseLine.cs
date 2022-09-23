@@ -7,18 +7,16 @@ namespace RealJSJDatabase.Models {
 
         public int Id { get; set; }
 
-        [StringLength(80)]
-        public string Description { get; set; }
-
-        [StringLength(10)]
-        public string Status { get; set; } = "NEW";
-
-        [Column(TypeName = "Decimal (11,2)")]
-        public decimal Total { get; set; } = 0;
+        public int Quantity { get; set; } = 1;
 
 
-        public int EmployeeId { get; set; }
-        public virtual Employee? Employee { get; set; } //FK
+        public int ExpenseId { get; set; }
+        public virtual Expense? Expense { get; set; }
+
+        public int ItemId { get; set; }
+        public virtual Item? Item { get; set; }
+
+
 
     }
 }
