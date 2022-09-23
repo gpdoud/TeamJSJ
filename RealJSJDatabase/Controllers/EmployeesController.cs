@@ -41,6 +41,27 @@ namespace RealJSJDatabase.Controllers
             return employee;
         }
 
+        //GET : api/Employees/{Email}/{Password}
+        [HttpGet("{Email}/{Password}")]
+        public async Task<ActionResult<Employee>> EmployeeLogin(string Email, string Password)
+        {
+            List<Employee> employees = await _context.Employees.ToListAsync();
+
+            //Filters the Employees by the email and password
+            var targetEmp = from emp in employees
+                            where emp.Email == Email && emp.Password == Password
+                            select emp;
+
+            //Pulls the one and only employee at of the list to display to user
+            Employee? employeeLogin = targetEmp.FirstOrDefault();
+
+            if (employeeLogin is null)
+            {
+                return NotFound();
+            }
+            return employeeLogin;
+        }
+
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
