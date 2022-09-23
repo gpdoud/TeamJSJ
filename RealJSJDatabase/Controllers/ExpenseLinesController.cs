@@ -68,7 +68,7 @@ namespace RealJSJDatabase.Controllers
                     throw;
                 }
             }
-
+            await RecalculateExpenseTotal(expenseLine.ExpenseId);
             return NoContent();
         }
 
@@ -79,7 +79,7 @@ namespace RealJSJDatabase.Controllers
         {
             _context.ExpenseLines.Add(expenseLine);
             await _context.SaveChangesAsync();
-
+            await RecalculateExpenseTotal(expenseLine.ExpenseId);
             return CreatedAtAction("GetExpenseLine", new { id = expenseLine.Id }, expenseLine);
         }
 
@@ -95,13 +95,36 @@ namespace RealJSJDatabase.Controllers
 
             _context.ExpenseLines.Remove(expenseLine);
             await _context.SaveChangesAsync();
-
+            await RecalculateExpenseTotal(expenseLine.ExpenseId);
             return NoContent();
         }
 
         private bool ExpenseLineExists(int id)
         {
             return _context.ExpenseLines.Any(e => e.Id == id);
+        }
+
+        //PRIVATE: RecalculateExpenseTotal(expenseId) Integrated into the methods of expenseline; not available for calling outside the class
+
+        private async Task<IActionResult> RecalculateExpenseTotal(int expenseId) {
+            var expense = await _context.Expenses.FindAsync(expenseId);
+
+            if (expense == null) {
+                throw new Exception(
+                    "Expense does not exist.");
+                }
+
+            expense.Total = (from el in _context.ExpenseLines
+                             join i in _context.Items
+                                 on el.ItemId equals i.Id
+                             where expenseId == el.ExpenseId
+                             select new {
+                                 ProdTotal = el.Quantity * i.Price
+                             }).Sum(x => x.ProdTotal);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
